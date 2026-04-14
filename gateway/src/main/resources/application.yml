@@ -1,0 +1,38 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      httpclient:
+        max-header-size: 65536
+      server:
+        webflux:
+          routes:
+            - id: upload-service
+              uri: ${UPLOAD_SERVICE_URI:http://localhost:8082}
+              predicates:
+                - Path=/api/images/**
+              filters:
+                - StripPrefix=0
+
+            - id: upload-service-storage
+              uri: ${UPLOAD_SERVICE_URI:http://localhost:8082}
+              predicates:
+                - Path=/api/storage/**
+              filters:
+                - StripPrefix=0
+
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowed-origin-patterns: "*"
+                allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
+                allowed-headers: "*"
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    com.imageprocessing.gateway: DEBUG
