@@ -1,10 +1,20 @@
 package com.imageprocessing.processing_service.rabbitmq;
 
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public class QueueConfig {
+
+    public static final String QUEUE = "jobs.queue";
+
+    @Bean
+    public Queue jobQueue() {
+        return new Queue(QUEUE, true);
+    }
 
     @Bean
     public MessageConverter jsonMessageConverter() {
