@@ -39,7 +39,7 @@ jobs:
           --health-retries 5
 
       kafka:
-        image: bitnami/kafka:latest
+        image: bitnami/kafka:3.7.0
         ports:
           - 9092:9092
         env:
@@ -50,6 +50,8 @@ jobs:
           KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@localhost:9093
           KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
           KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+          KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: true
+          ALLOW_PLAINTEXT_LISTENER: yes
         options: >-
           --health-cmd "/opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list"
           --health-interval 15s

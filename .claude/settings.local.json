@@ -4,7 +4,8 @@
       "Bash(xargs grep:*)",
       "Bash(find C:UsersuserDesktopspring-projectimage-processing-system -type f \\\\\\(-name *.properties -o -name *.yml -o -name *.yaml -o -name docker-compose* \\\\\\))",
       "Bash(find C:UsersuserDesktopspring-projectimage-processing-system -type f \\\\\\(-name *.java -o -name *.xml \\\\\\))",
-      "Bash(mvn compile:*)"
+      "Bash(mvn compile:*)",
+      "WebFetch(domain:hub.docker.com)"
     ]
   }
 }
