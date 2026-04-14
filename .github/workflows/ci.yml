@@ -39,7 +39,7 @@ jobs:
           --health-retries 5
 
       kafka:
-        image: bitnami/kafka:3.8
+        image: bitnami/kafka:latest
         ports:
           - 9092:9092
         env:
