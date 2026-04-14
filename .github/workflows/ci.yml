@@ -155,3 +155,49 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/processing-service:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  deploy:
+    name: Deploy to Hetzner
+    runs-on: ubuntu-latest
+    needs: docker-build
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy docker-compose.prod.yml to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HETZNER_HOST }}
+          username: ${{ secrets.HETZNER_USER }}
+          key: ${{ secrets.HETZNER_SSH_KEY }}
+          source: "docker-compose.prod.yml,database/"
+          target: "/opt/image-processing-system"
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HETZNER_HOST }}
+          username: ${{ secrets.HETZNER_USER }}
+          key: ${{ secrets.HETZNER_SSH_KEY }}
+          script: |
+            cd /opt/image-processing-system
+
+            # Write .env file from secrets
+            cat > .env <<EOF
+            DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            RABBITMQ_USER=${{ secrets.RABBITMQ_USER }}
+            RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }}
+            EOF
+
+            # Pull latest images
+            docker compose -f docker-compose.prod.yml pull
+
+            # Restart only app services (keep infra running to avoid data loss)
+            docker compose -f docker-compose.prod.yml up -d --no-deps gateway upload-service processing-service
+
+            # Clean up old images
+            docker image prune -f
