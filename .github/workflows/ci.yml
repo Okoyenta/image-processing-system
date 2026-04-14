@@ -196,7 +196,13 @@ jobs:
             # Pull latest images
             docker compose -f docker-compose.prod.yml pull
 
-            # Restart only app services (keep infra running to avoid data loss)
+            # Start infra if not already running (postgres, kafka, rabbitmq)
+            docker compose -f docker-compose.prod.yml up -d postgres rabbitmq kafka
+
+            # Wait for infra to be healthy before starting app services
+            sleep 20
+
+            # Restart app services with latest images
             docker compose -f docker-compose.prod.yml up -d --no-deps gateway upload-service processing-service
 
             # Clean up old images
