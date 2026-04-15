@@ -32,6 +32,20 @@ spring:
                 allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
                 allowed-headers: "*"
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: always
+  info:
+    build:
+      enabled: true
+    env:
+      enabled: true
+
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG

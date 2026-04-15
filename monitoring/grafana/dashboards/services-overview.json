@@ -1,0 +1,346 @@
+{
+  "title": "Image Processing System",
+  "uid": "image-processing-system",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "time": { "from": "now-1h", "to": "now" },
+  "timezone": "browser",
+  "tags": ["spring-boot", "image-processing"],
+  "panels": [
+    {
+      "type": "row",
+      "id": 1,
+      "title": "Deploy Versions",
+      "collapsed": false,
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 1 }
+    },
+    {
+      "type": "stat",
+      "id": 2,
+      "title": "Deployed Versions",
+      "description": "Current running version per service (from spring_boot_info). Version comes from pom.xml at build time.",
+      "gridPos": { "x": 0, "y": 1, "w": 24, "h": 5 },
+      "datasource": { "type": "prometheus", "uid": "-- Grafana --" },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "orientation": "horizontal",
+        "textMode": "name",
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "text": { "titleSize": 20, "valueSize": 14 }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "blue" },
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "blue", "value": null }] }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "spring_boot_info",
+          "legendFormat": "{{job}}  v{{version}}",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "id": 3,
+      "title": "Service Health",
+      "collapsed": false,
+      "gridPos": { "x": 0, "y": 6, "w": 24, "h": 1 }
+    },
+    {
+      "type": "stat",
+      "id": 4,
+      "title": "Gateway",
+      "gridPos": { "x": 0, "y": 7, "w": 8, "h": 4 },
+      "datasource": { "type": "prometheus" },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "background",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [
+            { "type": "value", "options": { "1": { "text": "UP", "color": "green" }, "0": { "text": "DOWN", "color": "red" } } }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] },
+          "color": { "mode": "thresholds" }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "up{job=\"gateway\"}",
+          "legendFormat": "Gateway",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 5,
+      "title": "Upload Service",
+      "gridPos": { "x": 8, "y": 7, "w": 8, "h": 4 },
+      "datasource": { "type": "prometheus" },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "background",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [
+            { "type": "value", "options": { "1": { "text": "UP", "color": "green" }, "0": { "text": "DOWN", "color": "red" } } }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] },
+          "color": { "mode": "thresholds" }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "up{job=\"upload-service\"}",
+          "legendFormat": "Upload Service",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 6,
+      "title": "Processing Service",
+      "gridPos": { "x": 16, "y": 7, "w": 8, "h": 4 },
+      "datasource": { "type": "prometheus" },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "background",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [
+            { "type": "value", "options": { "1": { "text": "UP", "color": "green" }, "0": { "text": "DOWN", "color": "red" } } }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] },
+          "color": { "mode": "thresholds" }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "up{job=\"processing-service\"}",
+          "legendFormat": "Processing Service",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "id": 7,
+      "title": "Process Uptime",
+      "gridPos": { "x": 0, "y": 11, "w": 24, "h": 4 },
+      "datasource": { "type": "prometheus" },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "orientation": "horizontal",
+        "textMode": "auto",
+        "colorMode": "none",
+        "graphMode": "none"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "color": { "mode": "fixed", "fixedColor": "text" },
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "text", "value": null }] }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "process_uptime_seconds{job=\"gateway\"}",
+          "legendFormat": "Gateway",
+          "instant": true
+        },
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "process_uptime_seconds{job=\"upload-service\"}",
+          "legendFormat": "Upload Service",
+          "instant": true
+        },
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "process_uptime_seconds{job=\"processing-service\"}",
+          "legendFormat": "Processing Service",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "id": 8,
+      "title": "HTTP Traffic",
+      "collapsed": false,
+      "gridPos": { "x": 0, "y": 15, "w": 24, "h": 1 }
+    },
+    {
+      "type": "timeseries",
+      "id": 9,
+      "title": "HTTP Request Rate (req/s)",
+      "gridPos": { "x": 0, "y": 16, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus" },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "none" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "sum(rate(http_server_requests_seconds_count{job=\"gateway\"}[1m])) by (job)",
+          "legendFormat": "Gateway"
+        },
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "sum(rate(http_server_requests_seconds_count{job=\"upload-service\"}[1m])) by (job)",
+          "legendFormat": "Upload Service"
+        },
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "sum(rate(http_server_requests_seconds_count{job=\"processing-service\"}[1m])) by (job)",
+          "legendFormat": "Processing Service"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "id": 10,
+      "title": "HTTP Error Rate (5xx req/s)",
+      "gridPos": { "x": 12, "y": 16, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus" },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "none" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": { "lineWidth": 2, "fillOpacity": 10 },
+          "color": { "mode": "fixed", "fixedColor": "red" }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "sum(rate(http_server_requests_seconds_count{status=~\"5..\"}[1m])) by (job)",
+          "legendFormat": "{{job}} 5xx errors"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "id": 11,
+      "title": "JVM & System",
+      "collapsed": false,
+      "gridPos": { "x": 0, "y": 24, "w": 24, "h": 1 }
+    },
+    {
+      "type": "timeseries",
+      "id": 12,
+      "title": "JVM Heap Memory Used",
+      "gridPos": { "x": 0, "y": 25, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus" },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "none" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "sum(jvm_memory_used_bytes{area=\"heap\",job=\"gateway\"}) by (job)",
+          "legendFormat": "Gateway heap"
+        },
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "sum(jvm_memory_used_bytes{area=\"heap\",job=\"upload-service\"}) by (job)",
+          "legendFormat": "Upload Service heap"
+        },
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "sum(jvm_memory_used_bytes{area=\"heap\",job=\"processing-service\"}) by (job)",
+          "legendFormat": "Processing Service heap"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "id": 13,
+      "title": "Process CPU Usage",
+      "gridPos": { "x": 12, "y": 25, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus" },
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "none" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1,
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "process_cpu_usage{job=\"gateway\"}",
+          "legendFormat": "Gateway"
+        },
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "process_cpu_usage{job=\"upload-service\"}",
+          "legendFormat": "Upload Service"
+        },
+        {
+          "datasource": { "type": "prometheus" },
+          "expr": "process_cpu_usage{job=\"processing-service\"}",
+          "legendFormat": "Processing Service"
+        }
+      ]
+    }
+  ]
+}

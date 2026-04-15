@@ -5,7 +5,7 @@ CREATE DATABASE image;
 -- \c image
 
 -- Create table
-CREATE TABLE image_upload (
+CREATE TABLE IF NOT EXISTS image_upload (
     id BIGSERIAL PRIMARY KEY,
     original_name VARCHAR(255),
     stored_name VARCHAR(255),

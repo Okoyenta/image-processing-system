@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'gateway'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['gateway:8081']
+
+  - job_name: 'upload-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['upload-service:8082']
+
+  - job_name: 'processing-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['processing-service:8083']

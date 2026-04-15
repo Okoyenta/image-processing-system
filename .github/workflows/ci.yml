@@ -166,13 +166,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Copy docker-compose.prod.yml to server
+      - name: Copy files to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HETZNER_HOST }}
           username: ${{ secrets.HETZNER_USER }}
           key: ${{ secrets.HETZNER_SSH_KEY }}
-          source: "docker-compose.prod.yml,database/"
+          source: "docker-compose.prod.yml,database/,monitoring/"
           target: "/opt/image-processing-system"
 
       - name: Deploy via SSH
@@ -191,6 +191,8 @@ jobs:
             POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
             RABBITMQ_USER=${{ secrets.RABBITMQ_USER }}
             RABBITMQ_PASSWORD=${{ secrets.RABBITMQ_PASSWORD }}
+            GRAFANA_ADMIN_USER=${{ secrets.GRAFANA_ADMIN_USER }}
+            GRAFANA_ADMIN_PASSWORD=${{ secrets.GRAFANA_ADMIN_PASSWORD }}
             EOF
 
             # Pull latest images
@@ -202,8 +204,16 @@ jobs:
             # Wait for infra to be healthy before starting app services
             sleep 20
 
+            # Apply database schema (idempotent - safe to run on every deploy)
+            docker compose -f docker-compose.prod.yml exec -T postgres \
+              psql -U ${POSTGRES_USER:-postgres} -d image \
+              -c "$(grep -v 'CREATE DATABASE' /opt/image-processing-system/database/image.sql)"
+
             # Restart app services with latest images
             docker compose -f docker-compose.prod.yml up -d --no-deps gateway upload-service processing-service
+
+            # Start/update monitoring stack
+            docker compose -f docker-compose.prod.yml up -d --no-deps prometheus grafana
 
             # Clean up old images
             docker image prune -f

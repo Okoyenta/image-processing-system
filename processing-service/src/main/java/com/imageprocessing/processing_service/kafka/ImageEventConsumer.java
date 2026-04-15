@@ -16,19 +16,19 @@ public class ImageEventConsumer {
 
     private final ImageProcessingService imageProcessingService; // not the Impl
 
-//    @KafkaListener(
-//            topics = "image-uploaded",
-//            groupId = "processing-service-group"
-//    )
-//    private void onImageUploaded(ImageUpload event) {
-//        log.info("Received image upload event: {}", event);
-//        try {
-//            imageProcessingService.process(event);
-//            log.info("Finished processing image: {}", event.getId());
-//        } catch (Exception e) {
-//            log.error("Error processing image {}: {}", event.getId(), e.getMessage());
-//        }
-//    }
+    @KafkaListener(
+            topics = "image-uploaded",
+            groupId = "processing-service-group"
+    )
+    private void onImageUploaded(ImageUpload event) {
+        log.info("Received image upload event: {}", event);
+        try {
+            imageProcessingService.process(event);
+            log.info("Finished processing image: {}", event.getId());
+        } catch (Exception e) {
+            log.error("Error processing image {}: {}", event.getId(), e.getMessage());
+        }
+    }
 
 
 }
