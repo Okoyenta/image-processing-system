@@ -167,6 +167,7 @@ services:
     command: -config.file=/etc/loki/loki-config.yml
     volumes:
       - ./monitoring/loki/loki-config.yml:/etc/loki/loki-config.yml
+      - loki-data:/loki
     networks:
       - app-net
     restart: unless-stopped
@@ -197,3 +198,4 @@ volumes:
   processed:
   prometheus-data:
   grafana-data:
+  loki-data:
