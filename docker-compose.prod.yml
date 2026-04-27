@@ -159,6 +159,29 @@ services:
     depends_on:
       - prometheus
 
+  loki:
+    image: grafana/loki:2.9.8
+    container_name: loki
+    ports:
+      - "3031:3100"
+    command: -config.file=/etc/loki/loki-config.yml
+    volumes:
+      - ./monitoring/loki/loki-config.yml:/etc/loki/loki-config.yml
+    networks:
+      - app-net
+
+  promtail:
+    image: grafana/promtail:2.9.8
+    container_name: promtail
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/log:/var/log:ro
+      - ./monitoring/loki/promtail-config.yml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - app-net
+
+
 # ── Volumes ───────────────────────────────────────────────────────────────
 
 volumes:
