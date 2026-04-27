@@ -10,6 +10,11 @@ common:
     kvstore:
       store: inmemory
 
+ingester:
+  wal:
+    enabled: true
+    dir: /loki/wal
+
 schema_config:
   configs:
     - from: 2024-01-01
@@ -34,3 +39,4 @@ limits_config:
 
 ruler:
   alertmanager_url: http://localhost:9093
+
