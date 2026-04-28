@@ -128,6 +128,7 @@ services:
 
   prometheus:
     image: prom/prometheus:v3.1.0
+    container_name: prometheus
     ports:
       - "9090:9090"
     volumes:
@@ -147,6 +148,7 @@ services:
 
   grafana:
     image: grafana/grafana:11.4.0
+    container_name: grafana
     ports:
       - "3030:3000"
     environment:
