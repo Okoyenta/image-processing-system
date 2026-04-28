@@ -40,6 +40,7 @@ compactor:
 
 limits_config:
   allow_structured_metadata: true
+  volume_enabled: true
 
 ruler:
   alertmanager_url: http://localhost:9093
