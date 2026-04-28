@@ -199,7 +199,7 @@
 #            docker compose -f docker-compose.prod.yml pull
 #
 #            # Start infra if not already running (postgres, kafka, rabbitmq)
-#            # docker compose -f docker-compose.prod.yml up -d postgres rabbitmq kafka
+#            # docker compose -f docker-compose.prod.yml up -d postgres rabbitmq kafka (also create the password for postgres on the server)
 #            docker compose -f docker-compose.prod.yml up -d --build loki promtail
 #
 #            # Wait for infra to be healthy before starting app services
