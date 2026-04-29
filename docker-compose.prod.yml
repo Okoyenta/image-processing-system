@@ -89,8 +89,7 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-    networks:
-      - app-net
+
 
   processing-service:
     image: ${DOCKER_USERNAME}/processing-service:latest
@@ -112,8 +111,6 @@ services:
       - uploads:/app/uploads
       - processed:/app/processed
     restart: unless-stopped
-    networks:
-      - app-net
     depends_on:
       postgres:
         condition: service_healthy
@@ -133,8 +130,6 @@ services:
     depends_on:
       - upload-service
       - processing-service
-    networks:
-      - app-net
 
   # ── Monitoring ────────────────────────────────────────────────────────────
 
@@ -150,8 +145,6 @@ services:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--storage.tsdb.retention.time=30d'
-    networks:
-      - app-net
     restart: unless-stopped
     depends_on:
       - gateway
@@ -171,8 +164,6 @@ services:
       - grafana-data:/var/lib/grafana
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
       - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
-    networks:
-      - app-net
     restart: unless-stopped
     depends_on:
       - prometheus
@@ -186,8 +177,6 @@ services:
     volumes:
       - ./monitoring/loki/loki-config.yml:/etc/loki/loki-config.yml
       - loki-data:/loki
-    networks:
-      - app-net
     restart: unless-stopped
 
   promtail:
@@ -199,8 +188,6 @@ services:
       - /var/log:/var/log:ro
       - ./monitoring/loki/promtail-config.yml:/etc/promtail/config.yml
     command: -config.file=/etc/promtail/config.yml
-    networks:
-      - app-net
     restart: unless-stopped
     depends_on:
       - loki
@@ -208,8 +195,7 @@ services:
 
 # ── Volumes ───────────────────────────────────────────────────────────────
 
-networks:
-  app-net:
+d
 
 volumes:
   postgres-data:
