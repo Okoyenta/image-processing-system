@@ -4,6 +4,7 @@ services:
 
   postgres:
     image: postgres:16-alpine
+    container_name: postgres
     environment:
       POSTGRES_DB: image
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
@@ -15,8 +16,6 @@ services:
       - ./database/init.sh:/docker-entrypoint-initdb.d/init.sh
       - ./database/image.sql:/docker-entrypoint-initdb.d/image.sql
     restart: unless-stopped
-    networks:
-      - app-net
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d image"]
       interval: 10s
@@ -25,6 +24,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:management-alpine
+    container_name: rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -32,8 +32,6 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
     restart: unless-stopped
-    networks:
-      - app-net
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
       interval: 10s
@@ -42,6 +40,7 @@ services:
 
   kafka:
     image: apache/kafka:3.9.2
+    container_name: kafka
     ports:
       - "9092:9092"
     environment:
@@ -59,8 +58,6 @@ services:
       interval: 15s
       timeout: 10s
       retries: 5
-    networks:
-      - app-net
 
   # ── Application services ──────────────────────────────────────────────────
 
@@ -115,6 +112,8 @@ services:
       - uploads:/app/uploads
       - processed:/app/processed
     restart: unless-stopped
+    networks:
+      - app-net
     depends_on:
       postgres:
         condition: service_healthy
@@ -122,8 +121,6 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-    networks:
-      - app-net
 
   gateway:
     image: ${DOCKER_USERNAME}/gateway:latest
