@@ -195,8 +195,6 @@ services:
 
 # ── Volumes ───────────────────────────────────────────────────────────────
 
-d
-
 volumes:
   postgres-data:
   uploads:
