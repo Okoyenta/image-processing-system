@@ -15,6 +15,8 @@ services:
       - ./database/init.sh:/docker-entrypoint-initdb.d/init.sh
       - ./database/image.sql:/docker-entrypoint-initdb.d/image.sql
     restart: unless-stopped
+    networks:
+      - app-net
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d image"]
       interval: 10s
@@ -30,6 +32,8 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
     restart: unless-stopped
+    networks:
+      - app-net
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
       interval: 10s
@@ -55,11 +59,14 @@ services:
       interval: 15s
       timeout: 10s
       retries: 5
+    networks:
+      - app-net
 
   # ── Application services ──────────────────────────────────────────────────
 
   upload-service:
     image: ${DOCKER_USERNAME}/upload-service:latest
+    container_name: image-upload-service
     ports:
       - "8082:8082"
     environment:
@@ -85,9 +92,12 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+    networks:
+      - app-net
 
   processing-service:
     image: ${DOCKER_USERNAME}/processing-service:latest
+    container_name: image-processing-service
     ports:
       - "8083:8083"
     environment:
@@ -112,9 +122,12 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+    networks:
+      - app-net
 
   gateway:
     image: ${DOCKER_USERNAME}/gateway:latest
+    container_name: image-gateway-service
     ports:
       - "8081:8081"
     environment:
@@ -123,6 +136,8 @@ services:
     depends_on:
       - upload-service
       - processing-service
+    networks:
+      - app-net
 
   # ── Monitoring ────────────────────────────────────────────────────────────
 
@@ -134,12 +149,12 @@ services:
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
-    networks:
-      - app-net
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--storage.tsdb.retention.time=30d'
+    networks:
+      - app-net
     restart: unless-stopped
     depends_on:
       - gateway
